@@ -1232,6 +1232,22 @@ LSQUnit::completeStore(typename StoreQueue::iterator store_idx)
 }
 
 bool
+LSQUnit::hasPendingStoresBefore(InstSeqNum sn)
+{
+    for (auto it = storeQueue.begin(); it != storeQueue.end(); ++it) {
+        // Stop when we reach the store with the given seqNum
+        if (it->valid() && it->instruction()->seqNum == sn) {
+            break;
+        }
+        // If we find a valid store that is not completed, return true
+        if (it->valid() && !it->completed()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
 LSQUnit::trySendPacket(bool isLoad, PacketPtr data_pkt)
 {
     bool ret = true;

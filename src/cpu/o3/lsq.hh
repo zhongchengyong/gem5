@@ -841,6 +841,13 @@ class LSQ
     /** Returns the number of stores a specific thread has to write back. */
     int numStoresToWB(ThreadID tid);
 
+    /**
+     * Returns whether there are any pending (not completed) stores before
+     * the store with the given sequence number in the specified thread.
+     * Used for WriteBarrier stores to wait for prior stores to complete.
+     */
+    bool hasPendingStoresBefore(ThreadID tid, InstSeqNum sn);
+
     /** Returns if the LSQ will write back to memory this cycle. */
     bool willWB();
     /** Returns if the LSQ of a specific thread will write back to memory this

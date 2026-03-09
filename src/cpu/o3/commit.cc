@@ -1182,6 +1182,20 @@ Commit::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
         head_inst->setCompleted();
     }
 
+    // For WriteBarrier stores, wait for all prior stores to complete
+    // writeback before allowing retirement. This ensures cache maintenance
+    // operations like cbo.clean see all prior stores' effects.
+    if (head_inst->isStore() && head_inst->isWriteBarrier() &&
+        inst_fault == NoFault) {
+        if (iewStage->hasPendingStoresBefore(tid, head_inst->seqNum)) {
+            DPRINTF(Commit,
+                    "[tid:%i] [sn:%llu] WriteBarrier store waiting for "
+                    "prior stores to complete writeback, PC %s.\n",
+                    tid, head_inst->seqNum, head_inst->pcState());
+            return false;
+        }
+    }
+
     if (inst_fault != NoFault) {
         DPRINTF(Commit, "Inst [tid:%i] [sn:%llu] PC %s has a fault\n",
                 tid, head_inst->seqNum, head_inst->pcState());

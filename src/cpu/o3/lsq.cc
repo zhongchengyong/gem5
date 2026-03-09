@@ -733,6 +733,12 @@ LSQ::numStoresToWB(ThreadID tid)
 { return thread.at(tid)->numStoresToWB(); }
 
 bool
+LSQ::hasPendingStoresBefore(ThreadID tid, InstSeqNum sn)
+{
+    return thread.at(tid)->hasPendingStoresBefore(sn);
+}
+
+bool
 LSQ::willWB()
 {
     for (ThreadID tid : *activeThreads) {

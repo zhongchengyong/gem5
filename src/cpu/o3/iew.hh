@@ -227,6 +227,17 @@ class IEW
     /** Returns if the LSQ has any stores to writeback. */
     bool hasStoresToWB(ThreadID tid) { return ldstQueue.hasStoresToWB(tid); }
 
+    /**
+     * Returns if there are any pending (not completed) stores before
+     * the store with the given sequence number. Used for WriteBarrier
+     * stores to wait for prior stores to complete writeback.
+     */
+    bool
+    hasPendingStoresBefore(ThreadID tid, InstSeqNum sn)
+    {
+        return ldstQueue.hasPendingStoresBefore(tid, sn);
+    }
+
     /** Check misprediction  */
     void checkMisprediction(const DynInstPtr &inst);
 

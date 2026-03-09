@@ -361,6 +361,13 @@ class LSQUnit
     /** Returns the number of stores to writeback. */
     int numStoresToWB() { return storesToWB; }
 
+    /**
+     * Returns if there are any pending (not completed) stores before
+     * the store with the given sequence number. Used for WriteBarrier
+     * stores to wait for prior stores to complete writeback.
+     */
+    bool hasPendingStoresBefore(InstSeqNum sn);
+
     /** Returns if the LSQ unit will writeback on this cycle. */
     bool
     willWB()
