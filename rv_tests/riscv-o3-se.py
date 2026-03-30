@@ -72,8 +72,8 @@ parser.add_argument(
 parser.add_argument(
     "--clock",
     type=str,
-    default="2GHz",
-    help="CPU clock frequency (default: 2GHz)",
+    default="1GHz",
+    help="CPU clock frequency (default: 1GHz)",
 )
 parser.add_argument(
     "--max-ticks",
@@ -111,9 +111,33 @@ else:
 # Create memory bus
 system.membus = SystemXBar()
 
-# Connect CPU to memory bus
-system.cpu.icache_port = system.membus.cpu_side_ports
-system.cpu.dcache_port = system.membus.cpu_side_ports
+# Create L1 caches (32KB, 4-way set associative)
+system.cpu.icache = Cache(
+    size="32kB",
+    assoc=4,
+    tag_latency=2,
+    data_latency=2,
+    response_latency=2,
+    mshrs=4,
+    tgts_per_mshr=20,
+)
+system.cpu.dcache = Cache(
+    size="32kB",
+    assoc=4,
+    tag_latency=2,
+    data_latency=2,
+    response_latency=2,
+    mshrs=4,
+    tgts_per_mshr=20,
+)
+
+# Connect CPU to caches
+system.cpu.icache_port = system.cpu.icache.cpu_side
+system.cpu.dcache_port = system.cpu.dcache.cpu_side
+
+# Connect caches to memory bus
+system.cpu.icache.mem_side = system.membus.cpu_side_ports
+system.cpu.dcache.mem_side = system.membus.cpu_side_ports
 
 # Create interrupt controller
 system.cpu.createInterruptController()
