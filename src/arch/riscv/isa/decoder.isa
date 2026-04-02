@@ -1393,7 +1393,7 @@ decode QUADRANT default Unknown::unknown() {
                             } else {
                                 Mem = 0;
                             }
-                        }}, mem_flags=[CLEAN, DST_POC],
+                        }}, mem_flags=[CLEAN, DST_POC, RELEASE],
                             inst_flags=[IsWriteBarrier]);
                         0x2: cbo_flush({{
                             SENVCFG senvcfg = xc->readMiscReg(MISCREG_SENVCFG);
